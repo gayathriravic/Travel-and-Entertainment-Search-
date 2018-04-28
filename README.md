@@ -6,3 +6,4 @@ Back-end: PHP
 Front-end: HTML,CSS, JavaScript
 
 
+View the webpage here: http://cs-server.usc.edu:37198/place.php
