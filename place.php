@@ -1,236 +1,226 @@
 <?php
-$a=10;
-$input_array=array();
-$latitude;$longitude;$radius;$type;$keyword;
-$jsonPlacesObject;
-$jsonObj="-1";
-$sub=0;
-$latitude=1;
-$longitude=1;
-global $keyword1;
-$keyword1="";
-global $location1;
-$location1="";
-global $flag_loc;
-$flag_loc=0;
-global $distance1;
-$distance1="";
-global $category1;
-$category1="default";
-//key=AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8
-
-
- $sub = isset($_POST['chooselocation']);
-
-function googlePlaces($input_array)
-{
-	global $jsonPlacesObject;
-	global $latitude;
-	global $longitude;
+	$a=10;
+	$input_array=array();
+	$latitude;$longitude;$radius;$type;$keyword;
+	$jsonPlacesObject;
+	$jsonObj="-1";
+	$sub=0;
+	$latitude=1;
+	$longitude=1;
 	global $keyword1;
-	$PlacesKey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
-	$latitude=$input_array[1];
-	$longitude=$input_array[2];
-	$radius=$input_array[3];
-	$type=$input_array[4];
-	$keyword=$input_array[5];
-	$keyword1=$keyword;
-	$googlePlacesURL="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$latitude.",".$longitude."&radius=".$radius."&type=".$type."&keyword=".$keyword."&key=".$PlacesKey;
-	
-		$jsonPlacesObject=json_decode(htmlspecialchars(@file_get_contents($googlePlacesURL),true),true);
-
-	
-	if(empty($jsonPlacesObject))
-	{
-		return;
-	}
-	$uniqueNames=$jsonPlacesObject['results'];
-	$namesArray=array();
-	$logoArray=array();
-	$addressArray=array();
-	foreach ($uniqueNames as $item) {
-		array_push($namesArray, $item['name']);
-		array_push($logoArray,$item['icon']);
-		array_push($addressArray,$item['vicinity']);
-	}
-	return json_encode($jsonPlacesObject,JSON_UNESCAPED_SLASHES);
-}
-
-$jsonObj;
-
-function geoLoc()
-{
-	global $jsonObj;
-	global $keyword1;
+	$keyword1="";
 	global $location1;
+	$location1="";
 	global $flag_loc;
+	$flag_loc=0;
 	global $distance1;
+	$distance1="";
 	global $category1;
+	$category1="default";
+	//key=AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8
 
-if(isset($_POST['searchbutton']))
-{
-	$keyword=$_POST['keyword'];
-	$keyword1=$keyword;
-	$category=$_POST['category'];
-	$category1=$category;
-	if($_POST['distance'])
+
+	 $sub = isset($_POST['chooselocation']);
+
+	function googlePlaces($input_array)
 	{
-		$distance=$_POST['distance'] * 1609.34;
-		$distance1=$_POST['distance'];
-    }
-	else{
-		$distance=10*1609.34;
-		$distance1=10;
+		global $jsonPlacesObject;
+		global $latitude;
+		global $longitude;
+		global $keyword1;
+		$PlacesKey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
+		$latitude=$input_array[1];
+		$longitude=$input_array[2];
+		$radius=$input_array[3];
+		$type=$input_array[4];
+		$keyword=$input_array[5];
+		$keyword1=$keyword;
+		$googlePlacesURL="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=".$latitude.",".$longitude."&radius=".$radius."&type=".$type."&keyword=".$keyword."&key=".$PlacesKey;
+
+			$jsonPlacesObject=json_decode(htmlspecialchars(@file_get_contents($googlePlacesURL),true),true);
+
+
+		if(empty($jsonPlacesObject))
+		{
+			return;
+		}
+		$uniqueNames=$jsonPlacesObject['results'];
+		$namesArray=array();
+		$logoArray=array();
+		$addressArray=array();
+		foreach ($uniqueNames as $item) {
+			array_push($namesArray, $item['name']);
+			array_push($logoArray,$item['icon']);
+			array_push($addressArray,$item['vicinity']);
+		}
+		return json_encode($jsonPlacesObject,JSON_UNESCAPED_SLASHES);
 	}
 
-	if(isset($_POST['location']))
+	$jsonObj;
+
+	function geoLoc()
+	{
+		global $jsonObj;
+		global $keyword1;
+		global $location1;
+		global $flag_loc;
+		global $distance1;
+		global $category1;
+
+		if(isset($_POST['searchbutton']))
+		{
+			$keyword=$_POST['keyword'];
+			$keyword1=$keyword;
+			$category=$_POST['category'];
+			$category1=$category;
+			if($_POST['distance'])
+			{
+				$distance=$_POST['distance'] * 1609.34;
+				$distance1=$_POST['distance'];
+		    	}
+			else{
+				$distance=10*1609.34;
+				$distance1=10;
+			    }
+
+			if(isset($_POST['location']))
+			{
+				$location=$_POST['location'];
+				$location1=$location;
+				$flag_loc=1;
+			}
+			if(isset($_POST['chooselocation'])) // if here is chosen.
+			{
+				if($_POST['chooselocation']=="here"){
+					$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
+					$latitude=34.0093;
+					$longitude=-118.2584;
+					$input_array=array();
+					array_push($input_array,$APIKey,$latitude,$longitude,$distance,$category,$keyword);
+					$jsonObj=googlePlaces($input_array);
+					return ($jsonObj);
+			}
+		}
+	}
+
+	
+	if(isset($_POST['location']))  //IF LOCATION IS CHOSEN.
 	{
 		$location=$_POST['location'];
-		$location1=$location;
-		$flag_loc=1;
-	}
-	if(isset($_POST['chooselocation'])) // if here is chosen.
-	{
-		if($_POST['chooselocation']=="here"){
-			$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
-			$latitude=34.0093;
-			$longitude=-118.2584;
-			$input_array=array();
-			array_push($input_array,$APIKey,$latitude,$longitude,$distance,$category,$keyword);
-			$jsonObj=googlePlaces($input_array);
-			return ($jsonObj);
-		}
-	}
- }
+		$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
+		$string = str_replace (" ", "+", urlencode($location));
+		$url="https://maps.googleapis.com/maps/api/geocode/json?address=".$string."&key=$APIKey";
+		//echo $url;
+		$jsonData=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
+		// The following are input parameters to the google places api function.
 
-if(isset($_POST['location']))  //IF LOCATION IS CHOSEN.
-{
-	$location=$_POST['location'];
-	$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
-	$string = str_replace (" ", "+", urlencode($location));
-	$url="https://maps.googleapis.com/maps/api/geocode/json?address=".$string."&key=$APIKey";
-	//echo $url;
-	$jsonData=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
-	// The following are input parameters to the google places api function.
+		$latitude=$jsonData['results'][0]['geometry']['location']['lat'];
+		$longitude=$jsonData['results'][0]['geometry']['location']['lng'];
 
-	$latitude=$jsonData['results'][0]['geometry']['location']['lat'];
-	$longitude=$jsonData['results'][0]['geometry']['location']['lng'];
+		$radius=$distance;
+		$type= $category;
+		$input_array=array();
 
-	$radius=$distance;
-	$type= $category;
-	$input_array=array();
+		array_push($input_array, $APIKey,$latitude,$longitude,$radius,$type,$keyword);
+		$jsonObj=googlePlaces($input_array);  //call functio
 
-	array_push($input_array, $APIKey,$latitude,$longitude,$radius,$type,$keyword);
-	$jsonObj=googlePlaces($input_array);  //call functio
-
-	return ($jsonObj);
-}                                                                                  
-elseif(isset($_POST['chooselocationnn']))
-
-	{
-		echo"hi";
-		$url="ip-api.com/json";
-		$jsonData_myLoc=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
-		echo $jsonData_myLoc;
-	}
+		return ($jsonObj);
+	}                                                                                  
+	
 
 }
-	function test()
-	{
-		echo "inside test";
-	}
-	
-	//$countofImages=0;
-	if(isset($_GET['addressname'])){
-		$address=$_GET['addressname'];
- 		$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
-		$string = str_replace (" ", "+", urlencode($address));
-		$url="https://maps.googleapis.com/maps/api/geocode/json?address=".$string."&key=$APIKey";
-	//echo $url;
-		$jsonData=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
-		echo json_encode($jsonData,JSON_UNESCAPED_SLASHES);
-		die();
-
-	}
-
-	 if(isset($_POST['searchbutton']))
-    {
-
-       $jsonobj=geoLoc();
-    } 
-
-
-	//$countofImages;
-	if(isset($_GET['placeid']))
+		function test()
 		{
-			global $countofImages;
-			$countofImages=0;
-			$placeid= $_GET['placeid'];
-			//print(gettype($placeid));
-			$apikey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
-			$url="https://maps.googleapis.com/maps/api/place/details/json?placeid=".$placeid."&key=".$apikey;
-			//$jsonPlace=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
-			$jsonPlacesObject=json_decode(htmlspecialchars(@file_get_contents($url),true),true);
-			
-				for($i=0;$i<5;$i++) //handle case when less than 5 images.
-				{
+			echo "inside test";
+		}
 
-				if(empty($jsonPlacesObject['result']['photos'][$i]))
-					break;
-				$countofImages=$countofImages+1;
-				//print($countofReviews);
-				$photo_width=$jsonPlacesObject['result']['photos'][$i]['width'];
-				$photo_height=$jsonPlacesObject['result']['photos'][$i]['height'];
-				$photo_reference=$jsonPlacesObject['result']['photos'][$i]['photo_reference'];
-				if($photo_reference&& $photo_width && $photo_height){
-				$makeCallUrl="https://maps.googleapis.com/maps/api/place/photo?maxwidth=".$photo_width."&photoreference=".$photo_reference."&key=".$apikey;
-				//file_put_contents($img.$i, file_get_contents($makeCallUrl));
-				$image="image".$i.".jpg";
-				if($makeCallUrl){
-				file_put_contents($image,file_get_contents($makeCallUrl));   //store images in the server.
-			      }
+		//$countofImages=0;
+		if(isset($_GET['addressname'])){
+			$address=$_GET['addressname'];
+			$APIKey="AIzaSyDRete1YEjQ4aRKgfcrhbdyge0wpfZtBM8";
+			$string = str_replace (" ", "+", urlencode($address));
+			$url="https://maps.googleapis.com/maps/api/geocode/json?address=".$string."&key=$APIKey";
+		//echo $url;
+			$jsonData=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
+			echo json_encode($jsonData,JSON_UNESCAPED_SLASHES);
+			die();
+
+		}
+
+		 if(isset($_POST['searchbutton']))
+	    		{
+
+	       		$jsonobj=geoLoc();
+	    	    } 
+
+
+		//$countofImages;
+		if(isset($_GET['placeid']))
+			{
+				global $countofImages;
+				$countofImages=0;
+				$placeid= $_GET['placeid'];
+				//print(gettype($placeid));
+				$apikey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
+				$url="https://maps.googleapis.com/maps/api/place/details/json?placeid=".$placeid."&key=".$apikey;
+				//$jsonPlace=json_decode(@file_get_contents($url),JSON_PRETTY_PRINT);
+				$jsonPlacesObject=json_decode(htmlspecialchars(@file_get_contents($url),true),true);
+
+					for($i=0;$i<5;$i++) //handle case when less than 5 images.
+					{
+
+						if(empty($jsonPlacesObject['result']['photos'][$i]))
+							break;
+						$countofImages=$countofImages+1;
+						//print($countofReviews);
+						$photo_width=$jsonPlacesObject['result']['photos'][$i]['width'];
+						$photo_height=$jsonPlacesObject['result']['photos'][$i]['height'];
+						$photo_reference=$jsonPlacesObject['result']['photos'][$i]['photo_reference'];
+						if($photo_reference&& $photo_width && $photo_height){
+						$makeCallUrl="https://maps.googleapis.com/maps/api/place/photo?maxwidth=".$photo_width."&photoreference=".$photo_reference."&key=".$apikey;
+						//file_put_contents($img.$i, file_get_contents($makeCallUrl));
+						$image="image".$i.".jpg";
+						if($makeCallUrl){
+						file_put_contents($image,file_get_contents($makeCallUrl));   //store images in the server.
+				      }
 			} 
 		}
-			echo json_encode($jsonPlacesObject,JSON_UNESCAPED_SLASHES);
-			die();
-	    }
+	echo json_encode($jsonPlacesObject,JSON_UNESCAPED_SLASHES);
+	die();
+  }
 
 ?>
 
-<script type="text/javascript">
-	function f1(){	
-		document.getElementById("searchbutton").disabled=false;
-		document.getElementById("location").disabled=true;
-}
-
-function f2(){
+	<script type="text/javascript">
+		function f1(){	
 			document.getElementById("searchbutton").disabled=false;
-			document.getElementById("location").disabled=false;
-}
+			document.getElementById("location").disabled=true;
+		}
 
-function f3(){
-	document.getElementById("location").disabled=false;
-}
+	function f2(){
+					document.getElementById("searchbutton").disabled=false;
+					document.getElementById("location").disabled=false;
+	}
 
-function clearvals()
-{
-	document.getElementById("location").value="";
-	document.getElementById("distance").value="";
-	document.getElementById("keyword2").value="";
-	var el=document.getElementById("sel");
-	//for(var i=0;i<el.length;i++)
-//	{
-//		el[i].checked=false;
-//	}
-	el.selectedIndex=2;
-	document.getElementById("chooselocation1").checked=true;
-	document.getElementById("chooselocation2").checked=false;
-	document.getElementById("location").disabled=true;
-	if(document.getElementById("demo").innerHTML)
-	document.getElementById("demo").innerHTML= "";
-	if(document.getElementById("displayname").innerHTML)
-		document.getElementById("displayname").innerHTML="";
-}
+	function f3(){
+		document.getElementById("location").disabled=false;
+	}
+
+	function clearvals()
+	{
+		document.getElementById("location").value="";
+		document.getElementById("distance").value="";
+		document.getElementById("keyword2").value="";
+		var el=document.getElementById("sel");
+		el.selectedIndex=2;
+		document.getElementById("chooselocation1").checked=true;
+		document.getElementById("chooselocation2").checked=false;
+		document.getElementById("location").disabled=true;
+		if(document.getElementById("demo").innerHTML)
+		document.getElementById("demo").innerHTML= "";
+		if(document.getElementById("displayname").innerHTML)
+			document.getElementById("displayname").innerHTML="";
+	}
 
 </script>
 <!--- ******************************************************************* HTML ***************************************************************** --> 
@@ -476,13 +466,13 @@ document.getElementById("sel").value="<?php echo $category1; ?>";
 
 function sendAddressToPHP(address){   //get the destination lat and long.
 
-	apikey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
-	var url = "place.php?addressname="+address;
-	var getJSONObj=function(url,callback){
-    var httpc = new XMLHttpRequest(); 
-    httpc.open("GET", url, true);
-    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  
-    httpc.onload= function(){
+		apikey="AIzaSyD10oZnvZuqjqAvHUw1VUDbNHowrumzToE";
+		var url = "place.php?addressname="+address;
+		var getJSONObj=function(url,callback){
+	    var httpc = new XMLHttpRequest(); 
+	    httpc.open("GET", url, true);
+	    httpc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");  
+	    httpc.onload= function(){
     	var status=httpc.status;
     	if(status==200){
     		//alert(httpc.response);   
